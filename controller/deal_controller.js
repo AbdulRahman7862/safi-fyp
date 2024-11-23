@@ -51,3 +51,4 @@ const updateDealDiscount = async (req, res) => {
 
 export { createDeal, getAllDeals, updateDealDiscount };
 
+
