@@ -1,0 +1,28 @@
+import DealService from "../services/deal_service.js"
+
+const createDeal = async (req, res) => {
+  try {
+    const addDeal = await DealService.createDeal(req.body, req.file)
+    res.status(200).json({
+      message: "Deal added successfully",
+      data: addDeal,
+    })
+  } catch (error) {
+    console.error("Error:", error.message)
+    res.status(400).json({
+      success: false,
+      message: error.message || "Error creating deal",
+    })
+  }
+}
+
+const getAllDeals = async (req, res) => {
+  try {
+    const deals = await DealService.getAllDeals()
+    res.status(200).json(deals)
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
+export { createDeal, getAllDeals }
