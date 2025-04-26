@@ -29,9 +29,13 @@ const Deals = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    restaurant_id : {
+    restaurant_id: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
+      references: {
+        model: 'restaurant',
+        key: 'id'
+      }
     }
   },
   {
