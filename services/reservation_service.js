@@ -84,14 +84,40 @@ const createReservation = async (data) => {
 
 const createPaymentIntent = async (amount, reservationId) => {
   try {
+    // First, get the reservation to verify it exists
+    const reservation = await Reservation.findByPk(reservationId)
+    if (!reservation) {
+      throw new Error('Reservation not found')
+    }
+
+    // Create a payment intent with the provided price ID
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount * 100, // Convert to cents
       currency: 'usd',
-      metadata: { reservationId },
+      payment_method_types: ['card'],
+      metadata: { 
+        reservationId: reservationId,
+        priceId: 'price_1RI3LbRon0O2j9QfjJrHzABZ',
+        productId: 'prod_SCSGI95V3cvoYv'
+      },
       description: `Payment for reservation ${reservationId}`,
     })
+
+    // Update reservation status to 'Processing'
+    await Reservation.update(
+      { reservationStatus: 'Processing' },
+      { where: { id: reservationId } }
+    )
+
     return paymentIntent
   } catch (error) {
+    // If payment intent creation fails, update reservation status to 'Failed'
+    if (reservationId) {
+      await Reservation.update(
+        { reservationStatus: 'Failed' },
+        { where: { id: reservationId } }
+      )
+    }
     throw new Error(`Failed to create payment intent: ${error.message}`)
   }
 }
