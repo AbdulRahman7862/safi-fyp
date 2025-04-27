@@ -40,21 +40,14 @@ class UserService {
   }
 
   static async loginUser(email, password) {
-    // const user = await User.findOne({ where: { email } })
-    // if (!user) {
-    //   throw new ApiError(400, "Invalid email or password")
-    // }
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "Invalid email or password",
-      });
+      throw new Error("Invalid email or password");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password)
+    const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      throw new ApiError(400, "Invalid email or password")
+      throw new Error("Invalid email or password");
     }
 
     const token = jwt.sign(
@@ -68,19 +61,18 @@ class UserService {
       {
         expiresIn: "1h",
       }
-    )
+    );
 
     return {
       user: {
         id: user.id, 
         email: user.email,
         username: user.username,
-        password: user.password,
         roleId: user.roleId,
         userType: user.userType,
       },
       token,
-    }
+    };
   }
 
   static async getAllUsers() {
