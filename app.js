@@ -1,7 +1,10 @@
 import cors from "cors"
+import dotenv from "dotenv"
 import express from "express"
 import morgan from "morgan"
+import Stripe from "stripe"
 import { connectDB, sequelize } from "./config/db.js"
+import Reservation from "./model/reservation_model.js"
 import areaRoutes from "./router/area_router.js"
 import bookingRoutes from "./router/booking_router.js"
 import categoryRoutes from "./router/category_routes.js"
@@ -9,15 +12,13 @@ import dealRoutes from "./router/deal_router.js"
 import favoriteRoutes from "./router/favorite_restaurant_router.js"
 import filterReservation from "./router/filter_reservation_router.js"
 import filterRoutes from "./router/filter_restaurant.js"
+import passwordResetRoutes from "./router/password_reset_router.js"
+import paymentRoutes from "./router/payment_routes.js"
 import reservationRoutes from "./router/reservation_routes.js"
 import resetRoutes from "./router/reset_password.js"
 import restaurantRoutes from "./router/restaurant_routes.js"
 import roleRoutes from "./router/role_routes.js"
 import userRoutes from "./router/user_routes.js"
-import dotenv from "dotenv"
-import Stripe from "stripe"
-import Reservation from "./model/reservation_model.js"
-import paymentRoutes from "./router/payment_routes.js"
 
 dotenv.config()
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
@@ -44,6 +45,7 @@ app.use("/api/areas", areaRoutes);
 app.use("/api/favorites", favoriteRoutes)
 app.use("/api/categories", categoryRoutes)
 app.use("/api/payments", paymentRoutes)
+app.use("/api/resets", passwordResetRoutes)
 
 app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
   const sig = req.headers["stripe-signature"]

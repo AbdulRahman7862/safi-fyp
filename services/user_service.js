@@ -22,7 +22,7 @@ class UserService {
         throw new Error(`Role "${userType}" not found in the database.`)
       }
 
-      const hashedPassword = await bcrypt.compare(password, 10)
+      const hashedPassword = await bcrypt.hash(password, 10)
       const newUser = await User.create({
         username,
         email,
@@ -45,7 +45,7 @@ class UserService {
       throw new Error("Invalid email or password");
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.hash(password, user.password);
     if (!isPasswordValid) {
       throw new Error("Invalid email or password");
     }
@@ -157,13 +157,13 @@ class UserService {
       console.log("New passwords matched"); // Debugging
 
       // ✅ Fix: Hash new password before saving
-      // const salt = await bcrypt.genSalt(10);
-      // user.password = await bcrypt.compare(newPassword, salt);
-      // await user.save();
-
       const salt = await bcrypt.genSalt(10);
-user.password = await bcrypt.hash(newPassword, salt);
-await user.save();
+      user.password = await bcrypt.compare(newPassword, salt);
+      await user.save();
+
+//       const salt = await bcrypt.genSalt(10);
+// user.password = await bcrypt.hash(newPassword, salt);
+// await user.save();
 
 
       console.log("Password changed successfully"); // Debugging
