@@ -147,7 +147,7 @@ User.hasOne(Restaurant, { foreignKey: "userId" })
 Restaurant.belongsTo(User, { foreignKey: "userId" })
 
 Restaurant.hasMany(Deals, { foreignKey: "restaurant_id", as: "deals" });
-Deals.belongsTo(Restaurant, { foreignKey: "restaurant_id" });
+// Deals.belongsTo(Restaurant, { foreignKey: "restaurant_id" });
 
 // Reservation.belongsTo(User, { foreignKey: "userId" })
 // Reservation.belongsTo(Restaurant, { foreignKey: "restaurantId" })
@@ -175,7 +175,7 @@ const syncDB = async (options = { alter: false, force: true }) => {
   }
 }
 
-syncDB({ alter: true, force: false })
+syncDB({ alter: true, force: false   })
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {

@@ -1,5 +1,5 @@
-import { DataTypes } from "sequelize"
-import { sequelize } from "../config/db.js"
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/db.js";
 
 const Deals = sequelize.define(
   "Deals",
@@ -29,19 +29,21 @@ const Deals = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
-    restaurant_id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: 'restaurant',
-        key: 'id'
-      }
-    }
+    // restaurant_id: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: true,
+    //   references: {
+    //     model: 'restaurant',
+    //     key: 'id'
+    //   }
+    // }
   },
   {
     tableName: "deals",
     timestamps: true,
   }
 )
+
+
 
 export default Deals

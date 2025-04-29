@@ -13,13 +13,13 @@ const sendResetOTP = async (req, res) => {
   try {
     const { email } = req.body;
 
-    // Validate and normalize email
+    
     if (!email || typeof email !== 'string') {
       return res.status(400).json({ message: 'Invalid email' });
     }
     const trimmedEmail = email.trim().toLowerCase();
 
-    // Check if the email exists in the users table (case-insensitive)
+    
     console.log('Checking email in users table:', trimmedEmail);
     const user = await User.findOne({
       where: Sequelize.where(

@@ -40,14 +40,14 @@ class UserService {
   }
 
   static async loginUser(email, password) {
-    const user = await User.findOne({ where: { email } });
+    const user = await User.findOne({ where: { email } })
     if (!user) {
-      throw new Error("Invalid email or password");
+      throw new Error("Invalid email or password")
     }
 
-    const isPasswordValid = await bcrypt.hash(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.password)
     if (!isPasswordValid) {
-      throw new Error("Invalid email or password");
+      throw new Error("Invalid email or password")
     }
 
     const token = jwt.sign(
@@ -61,18 +61,18 @@ class UserService {
       {
         expiresIn: "1h",
       }
-    );
+    )
 
     return {
       user: {
-        id: user.id, 
+        id: user.id,
         email: user.email,
         username: user.username,
         roleId: user.roleId,
         userType: user.userType,
       },
       token,
-    };
+    }
   }
 
   static async getAllUsers() {
@@ -96,7 +96,7 @@ class UserService {
       const otp = Math.floor(100000 + Math.random() * 900000)
       const expiresAt = new Date(Date.now() + 15 * 60 * 1000)
 
-       await Otp.create({ email, otp, expiresAt })
+      await Otp.create({ email, otp, expiresAt })
 
       const subject = "Your OTP for verification"
       const text = `Your OTP for verification is: ${otp}. It will expire in 15 minutes.`
@@ -136,41 +136,40 @@ class UserService {
       throw error
     }
   }
-  static async changePassword(userId, oldPassword, newPassword, confirmPassword) {
+  static async changePassword(
+    userId,
+    oldPassword,
+    newPassword,
+    confirmPassword
+  ) {
     try {
       // ✅ Fix: Correct way to find user
-      const user = await User.findOne({ where: { id: userId } });
-      if (!user) throw new Error("User not found");
+      const user = await User.findOne({ where: { id: userId } })
+      if (!user) throw new Error("User not found")
 
-      console.log("User found:", user.id); // Debugging
+      console.log("User found:", user.id) // Debugging
 
       // ✅ Fix: Ensure password comparison works correctly
-      const isMatch = await bcrypt.compare(oldPassword, user.password);
-      if (!isMatch) throw new Error("Old password is incorrect");
+      const isMatch = await bcrypt.compare(oldPassword, user.password)
+      if (!isMatch) throw new Error("Old password is incorrect")
 
-      console.log("Old password matched"); // Debugging
+      console.log("Old password matched") // Debugging
 
       // ✅ Fix: Ensure new passwords match
       if (newPassword !== confirmPassword)
-        throw new Error("Passwords do not match");
+        throw new Error("Passwords do not match")
 
-      console.log("New passwords matched"); // Debugging
+      console.log("New passwords matched") // Debugging
 
-      // ✅ Fix: Hash new password before saving
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.compare(newPassword, salt);
-      await user.save();
+      const salt = await bcrypt.genSalt(10)
+      user.password = await bcrypt.hash(newPassword, salt)
+      await user.save()
 
-//       const salt = await bcrypt.genSalt(10);
-// user.password = await bcrypt.hash(newPassword, salt);
-// await user.save();
-
-
-      console.log("Password changed successfully"); // Debugging
-      return "Password changed successfully";
+      console.log("Password changed successfully") // Debugging
+      return "Password changed successfully"
     } catch (error) {
-      console.error("Change Password Error:", error.message); // Debugging
-      throw new Error(error.message);
+      console.error("Change Password Error:", error.message) // Debugging
+      throw new Error(error.message)
     }
   }
   static async logOut(token) {
@@ -188,13 +187,12 @@ class UserService {
     }
   }
   static async getUserById(id) {
-    return await User.findByPk(id);
+    return await User.findByPk(id)
   }
-  
+
   static async updateUser(id, updateData) {
-    return await User.update(updateData, { where: { id: id } });
+    return await User.update(updateData, { where: { id: id } })
   }
-  
 }
 
 export default UserService

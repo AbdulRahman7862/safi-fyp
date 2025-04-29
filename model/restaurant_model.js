@@ -18,13 +18,9 @@ const Restaurant = sequelize.define(
       allowNull: false,
     },
     websiteUrl: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.JSON,
       allowNull: true,
-      validate: {
-        isUrl: {
-          msg: "Invalid website URL format.",
-        },
-      },
+       
     },
     socialMediaLinks: {
       type: DataTypes.JSON,
