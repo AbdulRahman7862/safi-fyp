@@ -1,12 +1,12 @@
-import Stripe from 'stripe';
 import dotenv from 'dotenv';
+import Stripe from 'stripe';
 import Reservation from '../model/reservation_model.js';
 
 dotenv.config();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 class PaymentController {
-  // Create payment intent
+  
   createPaymentIntent = async (req, res) => {
     try {
       const { reservationId } = req.body;
