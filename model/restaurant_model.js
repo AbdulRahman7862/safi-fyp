@@ -1,3 +1,4 @@
+
 import { DataTypes } from "sequelize"
 import { sequelize } from "../config/db.js"
 
@@ -17,10 +18,18 @@ const Restaurant = sequelize.define(
       type: DataTypes.STRING(255),
       allowNull: false,
     },
+    restaurantLatitude: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
+    restaurantLongitude: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+    },
     websiteUrl: {
-      type: DataTypes.JSON,
+      type: DataTypes.STRING(255),
       allowNull: true,
-       
+  
     },
     socialMediaLinks: {
       type: DataTypes.JSON,

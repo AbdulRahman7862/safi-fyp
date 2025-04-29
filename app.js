@@ -175,7 +175,7 @@ const syncDB = async (options = { alter: false, force: true }) => {
   }
 }
 
-syncDB({ alter: true, force: false   })
+syncDB({ alter: true, force: false })
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
