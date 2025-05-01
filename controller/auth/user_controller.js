@@ -119,13 +119,13 @@ const verifyOtp = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    console.log("Request User:", req.user); // Debugging Log
+    console.log("Request User:", req.user);  
 
     if (!req.user || !req.user.id) {
       throw new Error("User ID is missing. Please log in again.");
     }
 
-    const userId = req.user.id; // ✅ FIX: Extract userId correctly
+    const userId = req.user.id;  
     const { oldPassword, newPassword, confirmPassword } = req.body;
 
     const result = await UserService.changePassword(
@@ -140,7 +140,7 @@ const changePassword = async (req, res) => {
       message: result,
     });
   } catch (error) {
-    console.error("Error:", error.message); // Debugging Log
+    console.error("Error:", error.message); 
     res.status(400).json({ success: false, message: error.message });
   }
 };
@@ -207,9 +207,7 @@ const updateUserProfile = async (req, res) => {
 export {
   changePassword,
   createUser,
-  getAllUsers, logOut,
-  loginUser,
-  sendOtp, updateUserProfile, userProfile,
+  getAllUsers, loginUser, logOut, sendOtp, updateUserProfile, userProfile,
   verifyOtp
 }
 

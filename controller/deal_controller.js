@@ -1,20 +1,37 @@
-import DealService from "../services/deal_service.js"
+import DealService from "../services/deal_service.js";
 
 const createDeal = async (req, res) => {
   try {
-    const addDeal = await DealService.createDeal(req.body, req.file)
+    console.log("Request body:", req.body); // Add this to debug
+    const addDeal = await DealService.createDeal(req.body, req.file);
     res.status(200).json({
       message: "Deal added successfully",
       data: addDeal,
-    })
+    });
   } catch (error) {
-    console.error("Error:", error.message)
+    console.error("Error:", error.message);
     res.status(400).json({
       success: false,
       message: error.message || "Error creating deal",
-    })
+    });
   }
-}
+};
+
+// const createDeal = async (req, res) => {
+//   try {
+//     const addDeal = await DealService.createDeal(req.body, req.file)
+//     res.status(200).json({
+//       message: "Deal added successfully",
+//       data: addDeal,
+//     })
+//   } catch (error) {
+//     console.error("Error:", error.message)
+//     res.status(400).json({
+//       success: false,
+//       message: error.message || "Error creating deal",
+//     })
+//   }
+// }
 
 const getAllDeals = async (req, res) => {
   try {
@@ -25,4 +42,5 @@ const getAllDeals = async (req, res) => {
   }
 }
 
-export { createDeal, getAllDeals }
+export { createDeal, getAllDeals };
+

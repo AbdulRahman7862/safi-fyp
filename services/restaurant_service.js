@@ -41,7 +41,7 @@ class RestaurantService {
       }
 
       // Hash password and create user
-      const hashedPassword = await bcrypt.compare(password, 10);
+      const hashedPassword = await bcrypt.hash(password, 10);
       const admin = await User.create({
         username,
         email,
@@ -74,8 +74,10 @@ class RestaurantService {
       const restaurant = await Restaurant.create({
         restaurantName: String(parsedData.restaurantName),
         restaurantAddress: String(parsedData.restaurantAddress),
+        restaurantLatitude: Number(parsedData.restaurantLatitude || 0),
+        restaurantLongitude: Number(parsedData.restaurantLongitude || 0),
         websiteUrl: parsedData.websiteUrl || null,
-        socialMediaLinks: socialMediaLinks, // Store as JSON array
+        socialMediaLinks: socialMediaLinks, 
         restaurantType: parsedData.restaurantType ? JSON.stringify(parsedData.restaurantType) : JSON.stringify([]),
         operationalHours: String(parsedData.operationalHours || ""),
         minPriceRange: Number(parsedData.minPriceRange || 0),

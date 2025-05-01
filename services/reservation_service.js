@@ -1,9 +1,9 @@
+import dotenv from 'dotenv'
 import { Op } from "sequelize"
 import Stripe from 'stripe'
 import Reservation from "../model/reservation_model.js"
 import Restaurant from "../model/restaurant_model.js"
 import User from "../model/user_model.js"
-import dotenv from 'dotenv'
 
 dotenv.config()
 
