@@ -68,58 +68,52 @@ class PaymentController {
   // Process payment with card details
   processPayment = async (req, res) => {
     try {
-      const { paymentIntentId, paymentMethodId } = req.body;
+      const { paymentIntentId, reservationId } = req.body;
 
       // Validate input
-      if (!paymentIntentId || !paymentMethodId) {
+      if (!paymentIntentId || !reservationId) {
         return res.status(400).json({
           success: false,
-          message: 'Payment intent ID and payment method ID are required'
+          message: 'Payment intent ID and reservation ID are required'
         });
       }
 
-      // Confirm the payment intent with the payment method
-      const paymentIntent = await stripe.paymentIntents.confirm(paymentIntentId, {
-        payment_method: paymentMethodId
-      });
-
-      // Check payment status
+      // First, retrieve the payment intent to check its status
+      const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+      
+      // If the payment intent is already succeeded, return success
       if (paymentIntent.status === 'succeeded') {
         // Update reservation status to Accepted
         await Reservation.update(
           { reservationStatus: 'Accepted' },
-          { where: { id: paymentIntent.metadata.reservationId } }
+          { where: { id: reservationId } }
         );
 
         return res.status(200).json({
           success: true,
-          message: 'Payment successful',
+          message: 'Payment already processed successfully',
           status: 'Accepted'
         });
-      } else {
-        // Update reservation status to Failed
-        await Reservation.update(
-          { reservationStatus: 'Failed' },
-          { where: { id: paymentIntent.metadata.reservationId } }
-        );
-
-        return res.status(400).json({
-          success: false,
-          message: 'Payment failed',
-          status: 'Failed'
-        });
       }
+
+      // If the payment intent is not succeeded, return error
+      return res.status(400).json({
+        success: false,
+        message: 'Payment not confirmed',
+        status: 'Failed'
+      });
     } catch (error) {
       console.error('Error processing payment:', error);
       
       // Update reservation status to Failed if there's an error
-      if (req.body.paymentIntentId) {
-        const paymentIntent = await stripe.paymentIntents.retrieve(req.body.paymentIntentId);
-        if (paymentIntent.metadata.reservationId) {
+      if (req.body.reservationId) {
+        try {
           await Reservation.update(
             { reservationStatus: 'Failed' },
-            { where: { id: paymentIntent.metadata.reservationId } }
+            { where: { id: req.body.reservationId } }
           );
+        } catch (updateError) {
+          console.error('Error updating reservation status:', updateError);
         }
       }
 
