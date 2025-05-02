@@ -279,6 +279,8 @@ class PaymentController {
     try {
       const { paymentIntentId, reservationId } = req.body;
 
+      console.log("Payment ", req.body);
+
       // Validate input
       if (!paymentIntentId || !reservationId) {
         return res.status(400).json({
