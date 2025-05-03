@@ -1,6 +1,6 @@
-import dotenv from 'dotenv'
+import dotenv from "dotenv"
 import { Op } from "sequelize"
-import Stripe from 'stripe'
+import Stripe from "stripe"
 import Reservation from "../model/reservation_model.js"
 import Restaurant from "../model/restaurant_model.js"
 import User from "../model/user_model.js"
@@ -36,15 +36,16 @@ const createReservation = async (data) => {
     const latestRestaurant = await fetchLatestRestaurant()
     selectedRestaurantId = latestRestaurant.id
   }
-  const normalizedDate = new Date(reservationDate).toISOString().split("T")[0]  
-  const normalizedTime = reservationTime.trim()  
+
+  const normalizedDate = new Date(reservationDate).toISOString().split("T")[0]
+  const normalizedTime = reservationTime.trim()
 
   const existingReservation = await Reservation.findOne({
     where: {
       restaurantId: selectedRestaurantId,
       tableNumber,
       reservationDate: {
-        [Op.eq]: new Date(normalizedDate),  
+        [Op.eq]: new Date(normalizedDate),
       },
       reservationTime: normalizedTime,
     },
@@ -69,7 +70,7 @@ const createReservation = async (data) => {
 
   const reservation = await Reservation.create({
     reservationTime: normalizedTime,
-    reservationDate: new Date(normalizedDate),  
+    reservationDate: new Date(normalizedDate),
     numberOfPersons,
     tableNumber,
     reservationStatus: "Pending",
@@ -84,37 +85,33 @@ const createReservation = async (data) => {
 
 const createPaymentIntent = async (amount, reservationId) => {
   try {
-    // First, get the reservation to verify it exists
     const reservation = await Reservation.findByPk(reservationId)
     if (!reservation) {
-      throw new Error('Reservation not found')
+      throw new Error("Reservation not found")
     }
 
-    // Create a payment intent with the provided price ID
     const paymentIntent = await stripe.paymentIntents.create({
       amount: amount * 100, // Convert to cents
-      currency: 'usd',
-      payment_method_types: ['card'],
-      metadata: { 
+      currency: "usd",
+      payment_method_types: ["card"],
+      metadata: {
         reservationId: reservationId,
-        priceId: 'price_1RI3LbRon0O2j9QfjJrHzABZ',
-        productId: 'prod_SCSGI95V3cvoYv'
+        priceId: "price_1RI3LbRon0O2j9QfjJrHzABZ",
+        productId: "prod_SCSGI95V3cvoYv",
       },
       description: `Payment for reservation ${reservationId}`,
     })
 
-    // Update reservation status to 'Processing'
     await Reservation.update(
-      { reservationStatus: 'Processing' },
+      { reservationStatus: "Processing" },
       { where: { id: reservationId } }
     )
 
     return paymentIntent
   } catch (error) {
-    // If payment intent creation fails, update reservation status to 'Failed'
     if (reservationId) {
       await Reservation.update(
-        { reservationStatus: 'Failed' },
+        { reservationStatus: "Failed" },
         { where: { id: reservationId } }
       )
     }
@@ -125,7 +122,7 @@ const createPaymentIntent = async (amount, reservationId) => {
 const updateReservationStatus = async (reservationId, status) => {
   const reservation = await Reservation.findByPk(reservationId)
   if (!reservation) {
-    throw new Error('Reservation not found')
+    throw new Error("Reservation not found")
   }
   reservation.reservationStatus = status
   await reservation.save()
