@@ -89,7 +89,7 @@ class RestaurantService {
         restaurantInfo: parsedData.restaurantInfo ? JSON.stringify(parsedData.restaurantInfo) : JSON.stringify({}),
         additionalNotes: parsedData.additionalNotes ? String(parsedData.additionalNotes) : null,
         userId: admin.id,
-        status: "Accepted",
+        status: "Pending",
         image: imageUrl,
       });
 
