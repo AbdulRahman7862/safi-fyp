@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../config/db.js";
 import User from "../model/user_model.js";
+import Restaurant from "./restaurant_model.js";
 
 const Reservation = sequelize.define(
   "Reservation",
@@ -41,9 +42,19 @@ const Reservation = sequelize.define(
       allowNull: false,
       defaultValue: "Pending",
     },
+    // restaurantId: {
+    //   type: DataTypes.INTEGER,
+    //   allowNull: false,
+    // },
     restaurantId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true, // Or true if you allow restaurant deletion
+      references: {
+        model: 'restaurant', // exact table name
+        key: 'id',
+      },
+      onDelete: 'CASCADE', // or 'RESTRICT' or 'NO ACTION'
+      onUpdate: 'CASCADE',
     },
     deal: {
       type: DataTypes.STRING,
@@ -59,9 +70,6 @@ const Reservation = sequelize.define(
     timestamps: true,
   }
 );
-
- 
-Reservation.belongsTo(User, { foreignKey: "userId", onDelete: "SET NULL", onUpdate: "CASCADE" });
 
 export default Reservation;
  

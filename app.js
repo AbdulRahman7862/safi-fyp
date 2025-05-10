@@ -25,7 +25,8 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
 const app = express()
 
-app.use(express.json())
+app.
+use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 app.use(morgan("dev"))
@@ -145,7 +146,7 @@ import User from "./model/user_model.js"
 User.belongsTo(Role, { foreignKey: "roleId" })
 User.hasOne(Restaurant, { foreignKey: "userId" })
 Restaurant.belongsTo(User, { foreignKey: "userId" })
-
+Restaurant.hasMany(Reservation, { foreignKey: 'restaurantId' });
 Restaurant.hasMany(Deals, { foreignKey: "restaurant_id", as: "deals" });
 // Deals.belongsTo(Restaurant, { foreignKey: "restaurant_id" });
 

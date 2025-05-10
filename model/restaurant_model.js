@@ -1,6 +1,7 @@
 
 import { DataTypes } from "sequelize"
 import { sequelize } from "../config/db.js"
+import Reservation from "../model/reservation_model.js";
 
 const Restaurant = sequelize.define(
   "Restaurant",
@@ -98,5 +99,7 @@ const Restaurant = sequelize.define(
     timestamps: true,
   }
 )
+
+
 
 export default Restaurant

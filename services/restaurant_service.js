@@ -132,25 +132,44 @@ class RestaurantService {
       throw new ApiError(500, error.message || "An unexpected error occurred, Please try again");
     }
   }
-
   async getAllRestaurantNames() {
     try {
       const restaurants = await Restaurant.findAll({
-        attributes: ["restaurantName"],
+        attributes: ["id", "restaurantName"],
         raw: true,
       });
 
-      const restaurantNames = restaurants.map((restaurant) => restaurant.restaurantName);
-
-      if (!restaurantNames.length) {
-        throw new ApiError(404, "No restaurant names found");
+      if (!restaurants || restaurants.length === 0) {
+        throw new ApiError(404, "No restaurants found");
       }
 
-      return restaurantNames;
+      // Return both id and restaurantName
+      return restaurants.map((restaurant) => ({
+        id: restaurant.id,
+        restaurantName: restaurant.restaurantName,
+      }));
     } catch (error) {
       throw new ApiError(500, "Error fetching restaurant names: " + error.message);
     }
   }
+  // async getAllRestaurantNames() {
+  //   try {
+  //     const restaurants = await Restaurant.findAll({
+  //       attributes: ["restaurantName"],
+  //       raw: true,
+  //     });
+
+  //     const restaurantNames = restaurants.map((restaurant) => restaurant.restaurantName);
+
+  //     if (!restaurantNames.length) {
+  //       throw new ApiError(404, "No restaurant names found");
+  //     }
+
+  //     return restaurantNames;
+  //   } catch (error) {
+  //     throw new ApiError(500, "Error fetching restaurant names: " + error.message);
+  //   }
+  // }
 
   async getRestaurantNameById(restaurantId) {
     try {

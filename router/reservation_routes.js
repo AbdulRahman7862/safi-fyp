@@ -5,5 +5,9 @@ const router = express.Router()
 
 router.post("/create", ReservationController.createReservation)
 router.get("/get", ReservationController.getAllReservations)
+router.patch("/extend", ReservationController.extendReservation)
+// router.get("/:reservationId", ReservationController.getReservationById);
+router.get("/user/:userId", ReservationController.getReservationsByUserId);
 
 export default router
+
