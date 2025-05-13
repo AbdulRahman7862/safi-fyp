@@ -47,6 +47,17 @@ class DealService {
       throw new Error(error.message);
     }
   }
+
+  static async updateDealDiscount(dealId, actualPrice, newPrice) {
+    const deal = await Deals.findByPk(dealId);
+    if (!deal) {
+      throw new Error("Deal not found.");
+    }
+    deal.actual_price = actualPrice;
+    deal.deal_price = newPrice;
+    await deal.save();
+    return deal;
+  }
 }
 
 export default DealService;

@@ -36,5 +36,18 @@ const getAllDeals = async (req, res) => {
   }
 };
 
-export { createDeal, getAllDeals };
+const updateDealDiscount = async (req, res) => {
+  try {
+    const { dealId, actualPrice, newPrice } = req.body;
+    if (!dealId || actualPrice == null || newPrice == null) {
+      return res.status(400).json({ success: false, message: "dealId, actualPrice, and newPrice are required." });
+    }
+    const deal = await DealService.updateDealDiscount(dealId, actualPrice, newPrice);
+    res.status(200).json({ success: true, message: "Deal price updated successfully.", deal });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+};
+
+export { createDeal, getAllDeals, updateDealDiscount };
 

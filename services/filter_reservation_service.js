@@ -1,18 +1,26 @@
 import { Op } from 'sequelize';
 import Reservation from '../model/reservation_model.js';
 import User from '../model/user_model.js';
+import Restaurant from '../model/restaurant_model.js';
 
 const getFilteredReservations = async (filters) => {
   try {
     const { username, date, deal, tableNumber, dealName } = filters;
     
     const whereClause = {};
-    const include = [{
-      model: User,
-      as: 'User',
-      attributes: ['username'],
-      required: false
-    }];
+    const include = [
+      {
+        model: User,
+        attributes: ['username'],
+        required: false
+      },
+      {
+        model: Restaurant,
+        as: 'restaurant',
+        attributes: ['restaurantName'],
+        required: true
+      }
+    ];
 
     if (username) {
       include[0].required = true;
@@ -42,12 +50,12 @@ const getFilteredReservations = async (filters) => {
       include: include,
       order: [['reservationDate', 'ASC'], ['reservationTime', 'ASC']],
       raw: true,
-      nest: true // This helps with nested includes
+      nest: true
     });
 
     return reservations.map(res => ({
       ...res,
-      
+      restaurantName: res.restaurant?.restaurantName || null
     }));
 
   } catch (error) {

@@ -91,11 +91,10 @@ const getRestaurantNameByUserId = async (req, res) => {
   }
 
   try {
-    const restaurantName =
-      await restaurantService.getRestaurantNameByUserId(userId)
+    const restaurantInfo = await restaurantService.getRestaurantNameByUserId(userId)
     return res.status(200).json({
       success: true,
-      restaurantName,
+      ...restaurantInfo,
     })
   } catch (error) {
     console.error("Error in getting restaurant name:", error.message)

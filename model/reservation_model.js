@@ -48,7 +48,7 @@ const Reservation = sequelize.define(
     // },
     restaurantId: {
       type: DataTypes.INTEGER,
-      allowNull: true, // Or true if you allow restaurant deletion
+      allowNull: false, // Or true if you allow restaurant deletion
       references: {
         model: 'restaurant', // exact table name
         key: 'id',

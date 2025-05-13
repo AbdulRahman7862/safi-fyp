@@ -192,14 +192,17 @@ class RestaurantService {
       console.log("Searching for userId:", userId);
       const restaurant = await Restaurant.findOne({
         where: { userId },
-        attributes: ["restaurantName"],
+        attributes: ["id", "restaurantName"],
       });
 
       if (!restaurant) {
         throw new ApiError(404, "Restaurant not found for this user");
       }
 
-      return restaurant.restaurantName;
+      return {
+        restaurantId: restaurant.id,
+        restaurantName: restaurant.restaurantName,
+      };
     } catch (error) {
       console.error("Error in getRestaurantNameByUserId:", error.message);
       throw new ApiError(500, "Error fetching restaurant name: " + error.message);

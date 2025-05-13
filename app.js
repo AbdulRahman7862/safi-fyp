@@ -19,6 +19,9 @@ import resetRoutes from "./router/reset_password.js"
 import restaurantRoutes from "./router/restaurant_routes.js"
 import roleRoutes from "./router/role_routes.js"
 import userRoutes from "./router/user_routes.js"
+import chatRoutes from "./router/chat_routes.js"
+import setupSocket from "./socket.js"
+import http from "http"
 
 dotenv.config()
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
@@ -47,6 +50,7 @@ app.use("/api/favorites", favoriteRoutes)
 app.use("/api/categories", categoryRoutes)
 app.use("/api/payments", paymentRoutes)
 app.use("/api/resets", passwordResetRoutes)
+app.use("/api/chat", chatRoutes)
 
 app.post("/webhook", express.raw({ type: "application/json" }), async (req, res) => {
   const sig = req.headers["stripe-signature"]
@@ -136,9 +140,7 @@ import DealsCategory from "./model/deal_category_model.js"
 import DealMenuItem from "./model/deal_menu_items.js"
 import Deals from "./model/deals.js"
 // import ReservationDeals from "./model/reservation_deal.js"
-import {
-  default as Restaurant
-} from "./model/reservation_model.js"
+import Restaurant from "./model/restaurant_model.js"
 import Role from "./model/role_model.js"
 import SeatingTable from "./model/seating_table.js"
 import User from "./model/user_model.js"
@@ -146,13 +148,8 @@ import User from "./model/user_model.js"
 User.belongsTo(Role, { foreignKey: "roleId" })
 User.hasOne(Restaurant, { foreignKey: "userId" })
 Restaurant.belongsTo(User, { foreignKey: "userId" })
-Restaurant.hasMany(Reservation, { foreignKey: 'restaurantId' });
-Restaurant.hasMany(Deals, { foreignKey: "restaurant_id", as: "deals" });
-// Deals.belongsTo(Restaurant, { foreignKey: "restaurant_id" });
-
-// Reservation.belongsTo(User, { foreignKey: "userId" })
-// Reservation.belongsTo(Restaurant, { foreignKey: "restaurantId" })
-// Reservation.belongsTo(ReservationTable, { foreignKey: "reservationTableId" })
+Restaurant.hasMany(Reservation, { foreignKey: 'restaurantId', as: 'reservations' });
+Reservation.belongsTo(Restaurant, { foreignKey: 'restaurantId', as: 'restaurant' });
 Area.belongsTo(Restaurant, { foreignKey: "restaurantId" })
 Deals.belongsTo(DealsCategory, { foreignKey: "dealCategoryId" })
 SeatingTable.belongsTo(Area, { foreignKey: "areaId" })
@@ -162,10 +159,9 @@ DealMenuItem.belongsTo(Deals, { foreignKey: "dealId" })
 Deals.belongsTo(DealsCategory, { foreignKey: "categoryId", as: "category" })
 Deals.belongsTo(Restaurant, { foreignKey : "restaurantId"})
 DealsCategory.hasMany(Deals, { foreignKey: "categoryId" })
-// FavoriteRestaurant.belongsTo(User, { foreignKey: "userId" });
-// FavoriteRestaurant.belongsTo(Restaurant, { foreignKey: "restaurantId" });
+User.hasMany(Reservation, { foreignKey: 'userId', as: 'reservations' });
+Reservation.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 
-// ReservationDeals.belongsTo(Deals, { foreignKey: "dealId" })
 
 const syncDB = async (options = { alter: false, force: true }) => {
   try {
@@ -179,6 +175,8 @@ const syncDB = async (options = { alter: false, force: true }) => {
 syncDB({ alter: true, force: false })
 
 const PORT = process.env.PORT || 3000
-app.listen(PORT, () => {
+const server = http.createServer(app)
+setupSocket(server)
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

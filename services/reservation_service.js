@@ -134,6 +134,7 @@ const getAllReservations = async () => {
     include: [
       {
         model: User,
+        as: 'user',
         attributes: ["username"],
       },
     ],
@@ -215,10 +216,12 @@ const getReservationsByUserId = async (userId) => {
     include: [
       {
         model: User,
+        as: 'user',
         attributes: ["username"],
       },
       {
         model: Restaurant,
+        as: 'restaurant',
         attributes: ["restaurantName"],
       },
     ],
@@ -235,13 +238,13 @@ const getReservationsByUserId = async (userId) => {
 
     const reservationData = {
       ...reservation.toJSON(),
-      username: reservation.User?.username || null,
-      restaurantName: reservation.Restaurant?.restaurantName || null,
+      username: reservation.user?.username || null,
+      restaurantName: reservation.restaurant?.restaurantName || null,
     };
 
     // Remove included model objects
-    delete reservationData.User;
-    delete reservationData.Restaurant;
+    delete reservationData.user;
+    delete reservationData.restaurant;
 
     // Categorize reservations
     if (reservation.reservationStatus === "Cancelled") {

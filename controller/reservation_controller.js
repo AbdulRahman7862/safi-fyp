@@ -174,6 +174,29 @@ class ReservationController {
       });
     }
   };
+
+  cancelReservation = async (req, res) => {
+    try {
+      const { reservationId, userId } = req.body;
+      if (!reservationId || !userId) {
+        return res.status(400).json({
+          success: false,
+          message: "reservationId and userId are required.",
+        });
+      }
+      const result = await reservationService.cancelReservation(reservationId, userId);
+      return res.status(200).json({
+        success: true,
+        message: "Reservation cancelled successfully.",
+        reservation: result,
+      });
+    } catch (error) {
+      return res.status(400).json({
+        success: false,
+        message: error.message || "Failed to cancel reservation.",
+      });
+    }
+  };
 }
 
 export default new ReservationController();
